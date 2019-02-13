@@ -8,7 +8,7 @@ public class StringUtils {
 
     public static String lowerFirstCase(String resource,boolean isPackage){
         if(isPackage){
-            return lowerFirstCase(resource.substring(resource.lastIndexOf("."+1)));
+            return lowerFirstCase(resource.substring(resource.lastIndexOf(".")+1));
         }else{
             return lowerFirstCase(resource);
         }

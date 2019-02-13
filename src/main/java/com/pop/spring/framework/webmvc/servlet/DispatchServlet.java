@@ -1,5 +1,6 @@
 package com.pop.spring.framework.webmvc.servlet;
 
+import com.pop.spring.demo.DemoAction;
 import com.pop.spring.framework.context.ClassPathXmlApplicationContext;
 
 import javax.servlet.ServletConfig;
@@ -29,5 +30,8 @@ public class DispatchServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         ClassPathXmlApplicationContext context =
                 new ClassPathXmlApplicationContext(config.getInitParameter(CONFIG));
+        DemoAction a = (DemoAction) context.getBean("demoAction");
+        a.query(null,null,"Pop");
+       // System.out.println("11");
     }
 }

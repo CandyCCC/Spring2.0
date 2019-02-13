@@ -29,7 +29,7 @@ public class BeanDefinitionReader {
     public BeanDefinitionReader(String... locations) {
 
         //类似我们1.0中的读取内容
-        if(locations.length==1){return;}
+        if(!(locations.length>0)){return;}
         ClassLoader loader = this.getClass().getClassLoader();
         InputStream is = null;
         for(String s:locations){
@@ -47,13 +47,15 @@ public class BeanDefinitionReader {
     }
 
     private void doScanner(String packageName){
-        URL url = this.getClass().getClassLoader().getResource("/"+packageName);
+        String path = "/"+packageName.replaceAll("\\.","/");
+        URL url = this.getClass().getClassLoader().getResource(path);
+        if(null==url){ return;}
         File classDir = new File(url.getFile());
         for(File file:classDir.listFiles()){
             if(file.isDirectory()){
                 doScanner(packageName+"."+file.getName());
             }else{
-                registerBeanClasses.add(file.getName().replace(".class",""));
+                registerBeanClasses.add(packageName+"."+file.getName().replace(".class",""));
             }
         }
     }
