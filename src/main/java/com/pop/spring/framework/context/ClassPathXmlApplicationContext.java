@@ -216,4 +216,17 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
         }
         return null;
     }
+
+    /**
+     * 获得ioc的内容
+     * @return
+     */
+    public String[] getBeanDefinitionNames(){
+        return this.beanDefinitionMap.keySet().
+                toArray(new String[getBeanDefinitionCount()]);
+    }
+
+    public int getBeanDefinitionCount(){
+        return this.beanDefinitionMap.size();
+    }
 }
