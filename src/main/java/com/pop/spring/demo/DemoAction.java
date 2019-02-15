@@ -9,6 +9,8 @@ import com.pop.spring.framework.webmvc.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Pop
@@ -20,6 +22,14 @@ public class DemoAction {
 
     @Autowried
     private IDemoService demoService;
+
+    @RequestMapping("/first.html")
+    public ModelAndView goFirstPage(HttpServletRequest req, HttpServletResponse res,
+                                    @RequestParam("name") String name){
+        Map<String,Object> map = new HashMap();
+        map.put("name",name);
+        return new ModelAndView("first.html",map);
+    }
 
     @RequestMapping("/query.json")
     public ModelAndView query(HttpServletRequest req, HttpServletResponse res,
