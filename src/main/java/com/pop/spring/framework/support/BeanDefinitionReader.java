@@ -21,6 +21,7 @@ public class BeanDefinitionReader {
 
     private Properties config = new Properties();
 
+    //存储扫描包下面的所有class
     private List<String> registerBeanClasses = new ArrayList<String>();
 
     private final String SCANNER_PACKAGE = "scanPackage";

@@ -1,5 +1,10 @@
 package com.pop.spring.framework.beans;
 
+import com.pop.spring.framework.aop.AopConfig;
+import com.pop.spring.framework.aop.AopProxy;
+import com.pop.spring.framework.aop.AopProxyFactory;
+import com.pop.spring.framework.aop.DefaultAopProxy;
+
 /**
  * @author Pop
  * @date 2019/2/12 22:27
@@ -11,6 +16,16 @@ public class BeanWrapper implements FactoryBean{
      * 在spring中，会有事件响应机制，也会有一个监听
      */
     private BeanPostProcessor beanPostProcessor;
+
+    private DefaultAopProxy aopProxy ;
+
+    public void setAopConfig(AopConfig config){
+        aopProxy.setConfig(config);
+    }
+
+    public AopProxy getAopProxy() {
+        return aopProxy;
+    }
 
     public BeanPostProcessor getBeanPostProcessor() {
         return beanPostProcessor;
@@ -29,7 +44,8 @@ public class BeanWrapper implements FactoryBean{
     private Object originalInstance;
 
     public BeanWrapper(Object instance) {
-        this.wrapperInstance = instance;
+        aopProxy = AopProxyFactory.create(instance);
+        this.wrapperInstance = aopProxy.getProxy(instance);
         this.originalInstance = instance;
     }
 

@@ -4,6 +4,7 @@ import com.pop.spring.demo.DemoAction;
 import com.pop.spring.framework.annotation.Controller;
 import com.pop.spring.framework.annotation.RequestMapping;
 import com.pop.spring.framework.annotation.RequestParam;
+import com.pop.spring.framework.aop.ProxyUtils;
 import com.pop.spring.framework.context.ClassPathXmlApplicationContext;
 import com.pop.spring.framework.webmvc.HandlerAdapter;
 import com.pop.spring.framework.webmvc.HandlerMapping;
@@ -119,11 +120,15 @@ public class DispatchServlet extends HttpServlet {
                 new ClassPathXmlApplicationContext(config.getInitParameter(CONFIG));
         DemoAction a = (DemoAction) context.getBean("demoAction");
         a.query(null,null,"Pop");
-        initStrategies(context);
-       // System.out.println("11");
+        try {
+            initStrategies(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // System.out.println("11");
     }
 
-    private void initStrategies(ClassPathXmlApplicationContext context) {
+    private void initStrategies(ClassPathXmlApplicationContext context) throws Exception {
         //文件上传解析，如果请求类型是multipart将通过MultipartResolver进行解析
         initMultipartResolver(context);
         //本地化解析
@@ -197,11 +202,13 @@ public class DispatchServlet extends HttpServlet {
         }
     }
 
-    private void initHandlerMappings(ClassPathXmlApplicationContext context) {
+    private void initHandlerMappings(ClassPathXmlApplicationContext context) throws Exception{
         //需要获得context中存储的map的内容
         String[] beanNames = context.getBeanDefinitionNames();
         for(String name :beanNames){
-            Object controller = context.getBean(name);
+            //2019/2/16加入aop模块后，这个地方返回的是代理对象
+            Object  proxy= context.getBean(name);
+            Object controller = ProxyUtils.getTargetObject(proxy);
             //拿到后，得到所有的字段和注释，完成controller与menthod
             Class<?> clazz = controller.getClass();
             if(!clazz.isAnnotationPresent(Controller.class)){continue;}
