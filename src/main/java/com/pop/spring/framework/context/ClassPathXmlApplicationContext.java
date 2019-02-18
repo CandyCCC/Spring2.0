@@ -3,6 +3,7 @@ package com.pop.spring.framework.context;
 import com.pop.spring.framework.annotation.Autowried;
 import com.pop.spring.framework.annotation.Controller;
 import com.pop.spring.framework.annotation.Service;
+import com.pop.spring.framework.annotation.Transaction;
 import com.pop.spring.framework.aop.AopConfig;
 import com.pop.spring.framework.aop.ProxyUtils;
 import com.pop.spring.framework.beans.BeanDefinition;
@@ -237,6 +238,8 @@ public class ClassPathXmlApplicationContext extends  DefaultLisableBeanFactory i
         for(Method method:targetClass.getMethods()){
             if(pattern.matcher(method.toString()).matches()){
                 //如果匹配成功，我们需要取出代理对象中的相对应的方法，进行存储
+                //2019/2/18 单个方法认为可以支持事务，而不是支持整个类拥有失去
+                if(method.isAnnotationPresent(Transaction.class)){}//进行注册...
                 Method proxyMethod = proxyClass.getMethod(method.getName(),method.getParameterTypes());
                 aopConfig.put(proxyMethod,aspect.newInstance(),new Method[]{aspect.getMethod(before[1]),
                 aspect.getMethod(after[1])});

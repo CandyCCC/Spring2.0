@@ -15,6 +15,19 @@ public class AopJdkProxy extends DefaultAopProxy implements InvocationHandler {
         super(target);
     }
 
+    protected <T> void doException(T t) {
+
+    }
+
+    protected <T> void processBefore(T t) throws Exception {
+
+    }
+
+    protected <T> void processAfter(T t) throws Exception {
+
+    }
+
+
     public Object getProxy(Object instance){
         this.target = instance;
         Class<?> clazz  = instance.getClass();
@@ -30,6 +43,7 @@ public class AopJdkProxy extends DefaultAopProxy implements InvocationHandler {
          * 所以我们就简单的判断名字是否存在
          */
         //method.getDeclaringClass()
+
         Method m = proxy.getClass().getMethod(method.getName(),method.getParameterTypes());
         if(config.contain(m)) {//有一个问题，这里接口的方法和实现类的方法不一致,可能会导致匹配不上
             AopConfig.AopAspect aspect = config.getAopAspect(m);
@@ -37,9 +51,14 @@ public class AopJdkProxy extends DefaultAopProxy implements InvocationHandler {
             //参数的问题需要扫描一下
         }
 
-
-
-        Object object = method.invoke(target,args);
+        Object object = null;
+        try{
+            processBefore(this.target);
+            object = method.invoke(target,args);
+            processAfter(this.target);
+        }catch (Exception e){
+            doException(e);
+        }
         if(config.contain(m)) {
             AopConfig.AopAspect aspect = config.getAopAspect(m);
             aspect.getAdvices()[1].invoke(aspect.getAspect());//参数的问题

@@ -6,6 +6,15 @@ package com.pop.spring.framework.aop;
  */
 public class AopProxyFactory {
 
+    public static DefaultAopProxy createTransactionProxy(Object object){
+        Class<?> clazz = object.getClass();
+        if(clazz.getInterfaces().length>0){
+            return new DefaultTranJdkProxy(object);
+        }else{
+            return new DefaultTranCglibProxy(object);
+        }
+    }
+
     public static DefaultAopProxy create(Object target){
 
         //判断一下，这个对象是否有接口，没有的话，就生成cg

@@ -1,6 +1,7 @@
 package com.pop.spring.demo;
 
 import com.pop.spring.framework.annotation.Service;
+import com.pop.spring.framework.annotation.Transaction;
 
 /**
  * @author Pop
@@ -8,6 +9,7 @@ import com.pop.spring.framework.annotation.Service;
  */
 @Service
 public class DemoService implements IDemoService {
+    @Transaction
     public String get(String name) {
         return "Pop Name is:"+name;
     }

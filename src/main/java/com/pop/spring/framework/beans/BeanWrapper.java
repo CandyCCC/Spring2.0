@@ -1,5 +1,6 @@
 package com.pop.spring.framework.beans;
 
+import com.pop.spring.framework.annotation.Transaction;
 import com.pop.spring.framework.aop.AopConfig;
 import com.pop.spring.framework.aop.AopProxy;
 import com.pop.spring.framework.aop.AopProxyFactory;
@@ -44,9 +45,25 @@ public class BeanWrapper implements FactoryBean{
     private Object originalInstance;
 
     public BeanWrapper(Object instance) {
-        aopProxy = AopProxyFactory.create(instance);
+        //我认为，这地方要判断一下，是否应该用事务去代理，判断一下transaction注解
+        aopProxy = isTransactionProxy(instance);
         this.wrapperInstance = aopProxy.getProxy(instance);
         this.originalInstance = instance;
+    }
+
+    private DefaultAopProxy isTransactionProxy(Object instance){
+
+        //扫描注解，了解是否拥有这个事务注解，让后注册到某个类中去
+        //spring支持这个整个类型都可以事务，而有些只有单个方法支持事务
+        //com.pop.spring.framework.context.ClassPathXmlApplicationContext.instantionAopConfig
+        Class<?> clazz = instance.getClass();
+        if(clazz.isAnnotationPresent(Transaction.class)){
+            //这里暂时不考虑，类上设置了事务标签，而方法上也设置了事务标签的问题
+            return AopProxyFactory.createTransactionProxy(instance);
+        }else{
+            return AopProxyFactory.create(instance);
+        }
+
     }
 
     public Object getWrapperInstance(){

@@ -16,6 +16,19 @@ public class AopCglibProxy extends DefaultAopProxy implements MethodInterceptor 
         super(target);
     }
 
+    protected <T> void doException(T t) {
+        // for subclass
+    }
+
+    protected <T> void processBefore(T t) throws Exception {
+
+    }
+
+    protected <T> void processAfter(T t) throws Exception {
+
+    }
+
+
     @Override
     public Object getProxy(Object instance) {
         Enhancer enhancer = new Enhancer();
@@ -26,17 +39,27 @@ public class AopCglibProxy extends DefaultAopProxy implements MethodInterceptor 
 
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
 
+
         if(config.contain(method)) {
             AopConfig.AopAspect aspect = config.getAopAspect(method);
             aspect.getAdvices()[0].invoke(aspect.getAspect());//参数的问题
             //参数的问题需要扫描一下
         }
-        Object object = methodProxy.invokeSuper(o,objects);
+        Object object = null;
+        try{
+            processBefore(o);
+            object= methodProxy.invokeSuper(o,objects);
+            processAfter(o);
+        }catch (Exception e){
+            doException(e);
+        }
+
         if(config.contain(method)) {
             AopConfig.AopAspect aspect = config.getAopAspect(method);
             aspect.getAdvices()[1].invoke(aspect.getAspect());//参数的问题
             //参数的问题需要扫描一下
         }
+
         return object;
     }
 }
